@@ -8,6 +8,7 @@ import java.util.Random;
 public class Main {
     public static void main(String[] _args) {
         int size = 1;
+        multiplyMatrices(size, size, size);
         sumMatrices(size, size);
         linearSearch(size);
         multiplyMatrices(size, size, size);
@@ -17,24 +18,21 @@ public class Main {
 
     public static void sumMatrices(int row, int column) {
         final Random random = new Random();
-        final float[][] augend = new float[row][column];
-        final float[][] addend = new float[row][column];
-        final float[][] summary = new float[row][column];
-        for (int index = 0; index < row; index++) {
-            for (int innerIndex = 0; innerIndex < column; innerIndex++) {
-                augend[index][innerIndex] = random.nextFloat();
-                addend[index][innerIndex] = random.nextFloat();
-            }
+        final float[] augend = new float[row*column];
+        final float[] addend = new float[row*column];
+        final float[] summary = new float[row*column];
+        for (int index = 0; index < row*column; index++) {
+            augend[index] = random.nextFloat();
+            addend[index] = random.nextFloat();
         }
         final long startTime = System.currentTimeMillis();
         Kernel kernel = new Kernel() {
             @Override public void run() {
-                int row = getGlobalId();
-                int column = getPassId();
-                summary[row][column] = augend[row][column] + addend[row][column];
+                int index = getGlobalId();
+                summary[index] = augend[index] + addend[index];
             }
         };
-        kernel.execute(row, column);
+        kernel.execute(Range.create(row*column));
         long totalTime = System.currentTimeMillis() - startTime;
         kernel.dispose();
         System.out.println("Total time: " + totalTime);
@@ -63,7 +61,6 @@ public class Main {
         final float[] first = new float[columnFirst*row];
         final float[] second = new float[row*columnSecond];
         final float[] result = new float[columnFirst*columnSecond];
-
         for (int index = 0; index < first.length; index++) {
             first[index] = random.nextFloat();
             second[index] = random.nextFloat();

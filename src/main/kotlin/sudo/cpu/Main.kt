@@ -1,6 +1,6 @@
 package sudo.cpu
 
-import java.util.Random
+import java.util.*
 import kotlin.math.pow
 
 fun main(args: Array<String>) {
@@ -14,14 +14,12 @@ fun main(args: Array<String>) {
 
 fun sumMatrices(row: Int, column: Int) {
     val random = Random()
-    val augend = Array(row) { FloatArray(column) { random.nextFloat() } }
-    val addend = Array(row) { FloatArray(column) { random.nextFloat() } }
-    val summary = Array(row) { FloatArray(column) { random.nextFloat() } }
+    val augend = FloatArray(row*column) { random.nextFloat() }
+    val addend = FloatArray(row*column) { random.nextFloat() }
+    val summary = FloatArray(row*column) { random.nextFloat() }
     val startTime = System.currentTimeMillis()
-    for (index in 0 until row) {
-        for (innerIndex in 0 until column) {
-            summary[index][innerIndex] = augend[index][innerIndex] + addend[index][innerIndex]
-        }
+    for (index in 0 until row*column) {
+        summary[index] = augend[index] + addend[index]
     }
     println("Total time: ${System.currentTimeMillis() - startTime}")
 }
